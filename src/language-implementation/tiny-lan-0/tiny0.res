@@ -3,10 +3,6 @@ type rec expr =
   | Add(expr, expr) // a + b
   | Mul(expr, expr) // a * b
 
-type instr = Cst(int) | Add | Mul // no recursive
-type instrs = list <instr>
-type operand = int
-type stack = list <operand>
 
 // recursive evaluator
 let rec evalRec = expr => {
@@ -16,6 +12,11 @@ let rec evalRec = expr => {
   | Mul(e1, e2) => evalRec(e1) * evalRec(e2)
   }
 }
+
+type instr = Cst(int) | Add | Mul // no recursive
+type instrs = list <instr>
+type operand = int
+type stack = list <operand>
 
 /**
  * homework 0
