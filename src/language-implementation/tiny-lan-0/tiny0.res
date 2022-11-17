@@ -22,7 +22,7 @@ type stack = list <operand>
  * homework 0
  * Implement the compilation algorithm in ReScript
 */
-// TODO: using spread operator to append list
+// TODO: using spread operator to construct list
 let append = List.append;
 let rec compile = (expr: expr) : instrs => {
   switch expr {
@@ -38,7 +38,7 @@ let rec compile = (expr: expr) : instrs => {
   }
 }
 
-// linear evaluator
+// stack evaluator
 let rec eval = (instrs: instrs, stk: stack) => {
   switch (instrs, stk) {
     | (list{}, list{result, ..._}) =>
@@ -53,16 +53,6 @@ let rec eval = (instrs: instrs, stk: stack) => {
   }
 }
 
-Js.log(evalRec(Cst(1))); // 1
-Js.log(evalRec(
-  Add(Cst(1), Cst(2))
-)); // 3
-Js.log(evalRec(
-  Add(Add(Cst(1), Cst(2)), Cst(3))
-)); // 6
-Js.log(evalRec(
-  Mul(Cst(1), Cst(2))
-)); // 2
 Js.log(evalRec(
   Mul(
     Add(Cst(1), Cst(2)),
