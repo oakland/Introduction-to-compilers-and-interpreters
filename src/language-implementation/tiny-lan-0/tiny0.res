@@ -3,7 +3,6 @@ type rec expr =
   | Add(expr, expr) // a + b
   | Mul(expr, expr) // a * b
 
-
 // recursive evaluator
 let rec evalRec = expr => {
   switch expr {
@@ -13,32 +12,35 @@ let rec evalRec = expr => {
   }
 }
 
-type instr = Cst(int) | Add | Mul // no recursive
-type instrs = list <instr>
-type operand = int
-type stack = list <operand>
-
 /**
  * homework 0
  * Implement the compilation algorithm in ReScript
+ * Lowering expr to stack machine instrs(linearization)
 */
-// TODO: using spread operator to construct list
-let append = List.append;
+type instr = Cst(int) | Add | Mul // no recursive
+type instrs = list <instr>
+let concatMany = Belt.List.concatMany;
+
 let rec compile = (expr: expr) : instrs => {
   switch expr {
     | Cst(i) => list{ Cst(i) }
-    | Add(e1, e2) => append(
-        append(compile(e1), compile(e2)),
+    | Add(e1, e2) => concatMany([
+        compile(e1),
+        compile(e2),
         list{Add}
-      )
-    | Mul(e1, e2) => append(
-        append(compile(e1), compile(e2)),
+      ])
+    | Mul(e1, e2) => concatMany([
+        compile(e1),
+        compile(e2),
         list{Mul}
-      )
+      ])
   }
 }
 
-// stack evaluator
+// eval stack machine instrs
+type operand = int
+type stack = list <operand>
+
 let rec eval = (instrs: instrs, stk: stack) => {
   switch (instrs, stk) {
     | (list{}, list{result, ..._}) =>
