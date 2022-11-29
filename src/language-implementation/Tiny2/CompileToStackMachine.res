@@ -1,10 +1,13 @@
+/* homework 1 */
+/* Write a compiler to translate Nameless.expr to stack machine instrs */
+
 type sv = Slocal | Stmp
-type compileEnv = list<sv>
+type stackEnv = list<sv>
 type instr = Cst(int) | Add | Mul | Var(int) | Swap | Pop; // without Let
 // type instrs = list<instr>
 
 let concatMany = Belt.List.concatMany;
-let sindex = (cenv: compileEnv, n: int) => {
+let sindex = (cenv: stackEnv, n: int) => {
   let rec go = (cenv, n, index) => {
     switch cenv {
       | list{} => raise (Not_found)
@@ -15,7 +18,7 @@ let sindex = (cenv: compileEnv, n: int) => {
   go(cenv, n, 0)
 }
 
-let rec compileToStackMachine = (expr: Nameless.expr, cenv: compileEnv) : EvalInstrs.instrs => {
+let rec compileToStackMachine = (expr: Nameless.expr, cenv: stackEnv) : EvalInstrs.instrs => {
   switch expr {
     | Cst(i) => list{ Cst(i) }
     | Add(e1, e2) => concatMany([

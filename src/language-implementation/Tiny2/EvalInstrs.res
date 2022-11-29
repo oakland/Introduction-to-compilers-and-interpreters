@@ -1,3 +1,6 @@
+/* homework 1 */
+/* Write a interpreter for stack machine with variables */
+
 type instr = Cst(int) | Add | Mul | Var(int) | Swap | Pop
 type instrs = list<instr>
 type stack = list<int>
