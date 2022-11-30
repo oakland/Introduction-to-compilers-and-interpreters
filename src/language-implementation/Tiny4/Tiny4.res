@@ -2,27 +2,27 @@ type rec expr =
   | Cst(int)
   | Add(expr, expr)
   | Mul(expr, expr)
-  | Var(string)
-  | Let(string, expr, expr)
-  | Fn(list<string>, expr) // *new feature
-  | App(expr, list<expr>) // *new feature
+  | Var(int)
+  | Let(expr, expr)
+  | Fn(expr)
+  | App(expr, list<expr>)
 
 type rec value =
   | Vint(int)
-  | VClosure(env, list<string>, expr)
-and env = list<(string, value)>
+  | VClosure(env, expr)
+and env = list<value>
 
 let vadd = (v1, v2) : value => {
   switch(v1, v2) {
     | (Vint(i), Vint(j)) => Vint(i + j)
-    | _ => assert false // type err when add int and closure
+    | _ => assert false
   }
 }
 
 let vmul = (v1, v2) : value => {
   switch(v1, v2) {
     | (Vint(i), Vint(j)) => Vint(i * j)
-    | _ => assert false // type err when add int and closure
+    | _ => assert false
   }
 }
 
@@ -34,19 +34,19 @@ let rec eval = (expr: expr, env: env) : value => {
     | Cst(i) => Vint(i)
     | Add(e1, e2) => vadd(eval(e1, env), eval(e2, env))
     | Mul(e1, e2) => vmul(eval(e1, env), eval(e2, env))
-    | Var(x) => List.assoc(x, env)
-    | Let(x, e1, e2) => eval(e2, list{(x, eval(e1, env)), ...env})
-    | Fn(xs, e) => VClosure(env, xs, e) // computation suspended for application
+    | Var(n) => List.nth(env, n)
+    | Let(e1, e2) => eval(e2, list{eval(e1, env), ...env})
+    | Fn(e) => VClosure(env, e)
     | App(e, es) => {
-      let VClosure(env_closure, xs, body) = eval(e, env)
+      let VClosure(env_closure, body) = eval(e, env)
       let vs = map(es, e => eval(e, env))
-      let fun_env = concatMany([ zip(xs, vs), env_closure ])
+      let fun_env = concatMany([ vs, env_closure ])
       eval(body, fun_env)
     }
   }
 }
 
 Js.log(eval(
-  App(Fn(list{"one", "two"}, Add(Var("one"), Var("two"))), list{Cst(1), Cst(2)}),
+  App(Fn(Add(Var(0), Var(1))), list{Cst(1), Cst(2)}),
   list{}
 )); // Vint(3)
