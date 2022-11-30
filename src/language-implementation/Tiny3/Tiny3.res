@@ -15,14 +15,14 @@ and env = list<(string, value)>
 let vadd = (v1, v2) : value => {
   switch(v1, v2) {
     | (Vint(i), Vint(j)) => Vint(i + j)
-    | _ => assert false
+    | _ => assert false // type err when add int and closure
   }
 }
 
 let vmul = (v1, v2) : value => {
   switch(v1, v2) {
     | (Vint(i), Vint(j)) => Vint(i * j)
-    | _ => assert false
+    | _ => assert false // type err when add int and closure
   }
 }
 
@@ -36,7 +36,7 @@ let rec eval = (expr: expr, env: env) : value => {
     | Mul(e1, e2) => vmul(eval(e1, env), eval(e2, env))
     | Var(x) => List.assoc(x, env)
     | Let(x, e1, e2) => eval(e2, list{(x, eval(e1, env)), ...env})
-    | Fn(xs, e) => VClosure(env, xs, e)
+    | Fn(xs, e) => VClosure(env, xs, e) // computation suspended for application
     | App(e, es) => {
       let VClosure(env_closure, xs, body) = eval(e, env)
       let vs = map(es, v => eval(v, env))
