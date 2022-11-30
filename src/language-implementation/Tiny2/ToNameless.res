@@ -23,7 +23,7 @@ let rec compile = (expr: Name.expr, cenv: compileEnv) : Nameless.expr => {
 }
 
 Js.log(
-  Nameless.evalRec(
+  Nameless.eval(
     compile(
       Add(Let("dozon", Cst(12), Add(Var("dozon"), Var("dozon"))), Cst(2)),
       list{}
