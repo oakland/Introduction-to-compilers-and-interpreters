@@ -39,7 +39,7 @@ let rec eval = (expr: expr, env: env) : value => {
     | Fn(xs, e) => VClosure(env, xs, e)
     | App(e, es) => {
       let VClosure(env_closure, xs, body) = eval(e, env)
-      let vs = map(es, item => eval(item, env))
+      let vs = map(es, v => eval(v, env))
       let fun_env = concatMany([ zip(xs, vs), env_closure ])
       eval(body, fun_env)
     }
@@ -49,4 +49,4 @@ let rec eval = (expr: expr, env: env) : value => {
 Js.log(eval(
   App(Fn(list{"one", "two"}, Add(Var("one"), Var("two"))), list{Cst(1), Cst(2)}),
   list{}
-)); // 3
+)); // Vint(3)
